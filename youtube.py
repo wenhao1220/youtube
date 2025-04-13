@@ -2,7 +2,7 @@ import streamlit as st
 import yt_dlp
 import os
 
-st.title("🎬 YouTube 下載器（可下載到本機）")
+st.title("🎬 YouTube 下載器")
 
 # 使用者輸入 YouTube 連結
 url = st.text_input("請輸入 YouTube 網址：")
