@@ -24,7 +24,7 @@ def download_full_video(url):
         ydl_opts = {
             'format': 'best',
             'outtmpl': '%(title)s.%(ext)s',
-            'proxy': None,  # 如果要加代理，這裡改成 'http://你的proxy:port'
+            'proxy': 'http://123.123.123.123:8080',  # 如果要加代理，這裡改成 'http://你的proxy:port'
             'noplaylist': True,
             'quiet': True,  # 不要印一堆log
             'retries': 3,  # 失敗自動重試3次
@@ -49,7 +49,7 @@ def download_full_audio(url):
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': '%(title)s.%(ext)s',
-            'proxy': None,  # 如果要加代理，這裡改成 'http://你的proxy:port'
+            'proxy': 'http://123.123.123.123:8080',  # 如果要加代理，這裡改成 'http://你的proxy:port'
             'noplaylist': True,
             'quiet': True,
             'retries': 3,
