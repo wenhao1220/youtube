@@ -20,30 +20,55 @@ if 'download_mode' not in st.session_state:
 
 # 下載影片
 def download_full_video(url):
-    info = yt_dlp.YoutubeDL().extract_info(url, download=False)
-    title = info.get("title", "video")
-    filename = f"{title}.mp4"
-    ydl_opts = {
-        'format': 'best',
-        'outtmpl': filename,
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-    return filename
+    try:
+        ydl_opts = {
+            'format': 'best',
+            'outtmpl': '%(title)s.%(ext)s',
+            'proxy': None,  # 如果要加代理，這裡改成 'http://你的proxy:port'
+            'noplaylist': True,
+            'quiet': True,  # 不要印一堆log
+            'retries': 3,  # 失敗自動重試3次
+            'fragment_retries': 5,  # 分段失敗也重試
+            'continuedl': True,  # 如果下載中斷，繼續下載
+            'nocheckcertificate': True,  # 有些https驗證錯誤，跳過
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=True)
+            filename = ydl.prepare_filename(info)
+        return filename
+    except yt_dlp.utils.DownloadError:
+        st.error("❌ 下載失敗，可能是連線問題或影片受限。建議稍後再試或更換代理伺服器。")
+        st.stop()
+    except Exception as e:
+        st.error(f"❌ 發生錯誤：{str(e)}")
+        st.stop()
 
 # 下載音訊（不使用 ffmpeg）
 def download_full_audio(url):
-    info = yt_dlp.YoutubeDL().extract_info(url, download=False)
-    title = info.get("title", "audio")
-    filename = f"{title}.webm"
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'outtmpl': filename,
-        'postprocessors': [],
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-    return filename
+    try:
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'outtmpl': '%(title)s.%(ext)s',
+            'proxy': None,  # 如果要加代理，這裡改成 'http://你的proxy:port'
+            'noplaylist': True,
+            'quiet': True,
+            'retries': 3,
+            'fragment_retries': 5,
+            'continuedl': True,
+            'nocheckcertificate': True,
+            'postprocessors': [],  # 不轉檔
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=True)
+            filename = ydl.prepare_filename(info)
+        return filename
+    except yt_dlp.utils.DownloadError:
+        st.error("❌ 下載失敗，可能是連線問題或影片受限。建議稍後再試或更換代理伺服器。")
+        st.stop()
+    except Exception as e:
+        st.error(f"❌ 發生錯誤：{str(e)}")
+        st.stop()
+
 
 # 裁切影片
 def cut_video(input_file, output_file, start_time, end_time):
